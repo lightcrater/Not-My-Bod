@@ -5,6 +5,10 @@ extends state
 @export var fall: state
 @export var climb: state
 
+func enter()->void:
+	speed = parent.speed
+	parent.can_coyote = true
+
 func process_input(event: InputEvent) -> void:
 	if Input.is_action_pressed("jump"):
 		state_machine.change_state(jump)
@@ -14,11 +18,9 @@ func process_physics(delta: float) -> void:
 	parent.velocity.x = dir
 
 	if dir == 0:
-		print('stopped moving')
 		state_machine.change_state(idle)
 
 	if !parent.is_on_floor():
-		print('falling')
 		state_machine.change_state(fall)
 
 	parent.move_and_slide()

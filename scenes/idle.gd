@@ -7,6 +7,7 @@ extends state
 
 func enter() -> void:
 	parent.velocity.x = 0
+	parent.can_coyote = true
 
 func process_input(event: InputEvent) -> void:
 	if Input.is_action_pressed("jump"):
