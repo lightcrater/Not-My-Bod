@@ -1,8 +1,13 @@
-[gd_scene load_steps=17 format=3 uid="uid://bypnwyynsvl8w"]
+[gd_scene load_steps=22 format=3 uid="uid://bypnwyynsvl8w"]
 
-[ext_resource type="Script" uid="uid://b55dawucol5c6" path="res://scripts/player.gd" id="1_cwf78"]
+[ext_resource type="Script" uid="uid://b4v04bsxgsivg" path="res://scripts/player.gd" id="1_mayv3"]
 [ext_resource type="Texture2D" uid="uid://jfeqmda6m8q0" path="res://assets/Human.png" id="1_swaxu"]
-[ext_resource type="Script" uid="uid://dlyl5cmpjtxhb" path="res://scripts/state_machine.gd" id="3_4otcn"]
+[ext_resource type="Script" uid="uid://1n3t6sibrjgl" path="res://scripts/state machine/state_machine.gd" id="2_cwf78"]
+[ext_resource type="Script" uid="uid://dwxo5l7wl1jda" path="res://scenes/idle.gd" id="3_4otcn"]
+[ext_resource type="Script" uid="uid://b5y4pk6mym6m6" path="res://scripts/state machine/move.gd" id="5_u0vvy"]
+[ext_resource type="Script" uid="uid://bgj8gmmi6xmkn" path="res://scripts/state machine/jump.gd" id="6_oxdja"]
+[ext_resource type="Script" uid="uid://dt102xvyj4yri" path="res://scripts/state machine/fall.gd" id="7_lqsuu"]
+[ext_resource type="Script" uid="uid://qbp385a62iva" path="res://scripts/state machine/climb.gd" id="8_oxdja"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_swaxu"]
 atlas = ExtResource("1_swaxu")
@@ -114,28 +119,55 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_swaxu"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_oxdja"]
 radius = 7.0
 
-[node name="Human" type="CharacterBody2D"]
-script = ExtResource("1_cwf78")
+[node name="Human" type="CharacterBody2D" groups=["player"]]
+script = ExtResource("1_mayv3")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
+[node name="sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_c7jhf")
 animation = &"walk"
-autoplay = "idle"
+autoplay = "walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1)
-shape = SubResource("CapsuleShape2D_swaxu")
+shape = SubResource("CapsuleShape2D_oxdja")
 
-[node name="state_machine" type="Node" parent="."]
+[node name="state_machine" type="Node" parent="." node_paths=PackedStringArray("current_state", "idle", "walk", "jump", "fall", "climb")]
+script = ExtResource("2_cwf78")
+current_state = NodePath("idle")
+idle = NodePath("idle")
+walk = NodePath("walk")
+jump = NodePath("jump")
+fall = NodePath("fall")
+climb = NodePath("climb")
+
+[node name="idle" type="Node" parent="state_machine" node_paths=PackedStringArray("walk", "jump", "climb", "fall")]
 script = ExtResource("3_4otcn")
+walk = NodePath("../walk")
+jump = NodePath("../jump")
+climb = NodePath("../climb")
+fall = NodePath("../fall")
 
-[node name="idle" type="Node" parent="state_machine"]
+[node name="walk" type="Node" parent="state_machine" node_paths=PackedStringArray("idle", "jump", "fall", "climb")]
+script = ExtResource("5_u0vvy")
+idle = NodePath("../idle")
+jump = NodePath("../jump")
+fall = NodePath("../fall")
+climb = NodePath("../climb")
 
-[node name="walk" type="Node" parent="state_machine"]
+[node name="jump" type="Node" parent="state_machine" node_paths=PackedStringArray("fall", "climb")]
+script = ExtResource("6_oxdja")
+fall = NodePath("../fall")
+climb = NodePath("../climb")
 
-[node name="jump" type="Node" parent="state_machine"]
+[node name="fall" type="Node" parent="state_machine" node_paths=PackedStringArray("idle", "walk", "jump", "climb")]
+script = ExtResource("7_lqsuu")
+idle = NodePath("../idle")
+walk = NodePath("../walk")
+jump = NodePath("../jump")
+climb = NodePath("../climb")
 
 [node name="climb" type="Node" parent="state_machine"]
+script = ExtResource("8_oxdja")

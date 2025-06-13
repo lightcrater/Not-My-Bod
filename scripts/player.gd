@@ -1,17 +1,9 @@
 extends CharacterBody2D
-class_name player
+class_name Player
 
-@onready var sprite = $Sprite
-@onready var state_machine = $state_machine
+@export var speed: int = 150
+@export var jump_str: int = 400
+@export var grav_mod: float = 1
 
 func _ready() -> void:
-	state_machine.init(self)
-
-func _unhandled_input(event: InputEvent) -> void:
-	state_machine.process_event(event)
-
-func _physics_process(delta: float) -> void:
-	state_machine.process_physics(delta)
-
-func _process(delta: float) -> void:
-	state_machine.process_frame(delta)
+	$state_machine.init(self)
